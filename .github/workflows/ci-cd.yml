@@ -16,12 +16,14 @@ jobs:
               run: |
                 python3 --version
                 which python3
-            # - name: Install dependencies
-            #   run: |
-            #     source .venv/bin/activate
-            #     pip install -r requirements.txt
+            - name: Install dependencies
+              run: |
+                python3 -m venv .venv
+                source .venv/bin/activate
+                pip install -r requirements.txt
             - name: Run tests
               run: |
+                source .venv/bin/activate
                 pytest test_app.py -v
     build:
         name: Build Docker Image
@@ -44,6 +46,7 @@ jobs:
             - name: stop old container
               run: |
                  docker stop python-app || true
+                 docker rm python-app || true
             - name: start new container
               run: |
                  docker run -d --name python-app -p 5001:5001 --restart unless-stopped ci-cd-demo:latest
